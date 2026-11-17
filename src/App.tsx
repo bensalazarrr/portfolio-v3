@@ -123,7 +123,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <div className="relative min-h-screen text-slate-900 dark:text-[#f4f4f6]">
         <ScrollProgressBar />
-        <AmbientBackground />
+        <AmbientBackground theme={theme} />
         <Navbar
           route={route}
           theme={theme}

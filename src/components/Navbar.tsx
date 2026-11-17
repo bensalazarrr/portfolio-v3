@@ -1,6 +1,6 @@
 import { Menu, Moon, Sun, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import { PORTFOLIO_PROFILE } from '../data/portfolio';
 
 export type AppRoute =
@@ -16,9 +16,9 @@ interface NavbarProps {
 }
 
 const NAV_LINKS = [
-  { id: 'projects', label: 'Projects', path: '/', sectionId: 'projects' },
   { id: 'about', label: 'About', path: '/', sectionId: 'about' },
   { id: 'skills', label: 'Skills', path: '/', sectionId: 'skills' },
+  { id: 'projects', label: 'Projects', path: '/', sectionId: 'projects' },
   { id: 'journey', label: 'Journey', path: '/', sectionId: 'journey' },
   { id: 'contact', label: 'Contact', path: '/', sectionId: 'contact' },
 ];
@@ -32,41 +32,89 @@ export function Navbar({
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
+  const scrollLockRef = useRef<{
+    active: boolean;
+    timerId: number | null;
+  }>({ active: false, timerId: null });
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 24);
-    };
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    if (route.view !== 'home') {
-      setActiveSection('projects');
-      return;
+  const clearScrollLock = () => {
+    if (scrollLockRef.current.timerId !== null) {
+      window.clearTimeout(scrollLockRef.current.timerId);
+      scrollLockRef.current.timerId = null;
     }
+    scrollLockRef.current.active = false;
+  };
 
-    const sectionIds = ['projects', 'about', 'skills', 'journey', 'contact'];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible.length > 0) {
-          setActiveSection(visible[0].target.id);
+  useEffect(() => {
+    const sectionIds = ['about', 'skills', 'projects', 'journey', 'contact'];
+
+    const updateNavState = () => {
+      setScrolled(window.scrollY > 24);
+
+      if (scrollLockRef.current.active) {
+        return;
+      }
+
+      if (route.view !== 'home') {
+        setActiveSection('projects');
+        return;
+      }
+
+      // Near bottom of document -> Contact is active
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 48
+      ) {
+        setActiveSection('contact');
+        return;
+      }
+
+      const threshold = 150;
+      let current = '';
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top <= threshold) {
+          current = id;
         }
-      },
-      { rootMargin: '-18% 0px -60% 0px', threshold: [0.05, 0.2, 0.45] }
-    );
+      }
 
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
+      setActiveSection(current);
+    };
+
+    const handleUserScrollInterrupt = () => {
+      if (scrollLockRef.current.active) {
+        clearScrollLock();
+      }
+    };
+
+    const handleScrollEnd = () => {
+      if (scrollLockRef.current.active) {
+        clearScrollLock();
+        updateNavState();
+      }
+    };
+
+    updateNavState();
+    window.addEventListener('scroll', updateNavState, { passive: true });
+    window.addEventListener('resize', updateNavState, { passive: true });
+    window.addEventListener('wheel', handleUserScrollInterrupt, {
+      passive: true,
     });
+    window.addEventListener('touchstart', handleUserScrollInterrupt, {
+      passive: true,
+    });
+    window.addEventListener('scrollend', handleScrollEnd, { passive: true });
 
-    return () => observer.disconnect();
+    return () => {
+      clearScrollLock();
+      window.removeEventListener('scroll', updateNavState);
+      window.removeEventListener('resize', updateNavState);
+      window.removeEventListener('wheel', handleUserScrollInterrupt);
+      window.removeEventListener('touchstart', handleUserScrollInterrupt);
+      window.removeEventListener('scrollend', handleScrollEnd);
+    };
   }, [route.view]);
 
   useEffect(() => {
@@ -75,6 +123,24 @@ export function Navbar({
 
   const handleLinkClick = (path: string, sectionId?: string) => {
     setMobileOpen(false);
+    clearScrollLock();
+
+    if (sectionId) {
+      scrollLockRef.current.active = true;
+      scrollLockRef.current.timerId = window.setTimeout(() => {
+        scrollLockRef.current.active = false;
+        scrollLockRef.current.timerId = null;
+      }, 850);
+      setActiveSection(sectionId);
+    } else if (path === '/') {
+      scrollLockRef.current.active = true;
+      scrollLockRef.current.timerId = window.setTimeout(() => {
+        scrollLockRef.current.active = false;
+        scrollLockRef.current.timerId = null;
+      }, 850);
+      setActiveSection('');
+    }
+
     onNavigate(path, sectionId);
   };
 
@@ -102,51 +168,61 @@ export function Navbar({
           </a>
 
           {/* Zone 2: Concise single-line text nav links */}
-          <nav
-            aria-label="Primary navigation"
-            className="hidden items-center gap-7 md:flex"
-          >
-            {NAV_LINKS.map((item) => {
-              const isActive =
-                route.view !== 'home'
-                  ? item.id === 'projects'
-                  : activeSection === item.id;
+          <LayoutGroup id="primary-nav">
+            <nav
+              aria-label="Primary navigation"
+              className="hidden items-center gap-7 md:flex"
+            >
+              {NAV_LINKS.map((item) => {
+                const isActive =
+                  route.view !== 'home'
+                    ? item.id === 'projects'
+                    : activeSection === item.id;
 
-              return (
-                <a
-                  key={item.id}
-                  href={
-                    item.id === 'projects' && route.view !== 'home'
-                      ? '/projects'
-                      : `#${item.sectionId}`
-                  }
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (item.id === 'projects' && route.view === 'home') {
-                      handleLinkClick('/', 'projects');
-                    } else if (item.id === 'projects' && route.view !== 'home') {
-                      handleLinkClick('/projects');
-                    } else {
-                      handleLinkClick('/', item.sectionId);
+                return (
+                  <a
+                    key={item.id}
+                    href={
+                      item.id === 'projects' && route.view !== 'home'
+                        ? '/projects'
+                        : `#${item.sectionId}`
                     }
-                  }}
-                  className={`relative py-1 text-sm font-medium whitespace-nowrap shrink-0 transition-colors duration-200 ${
-                    isActive
-                      ? 'text-slate-950 dark:text-white'
-                      : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
-                  }`}
-                >
-                  {item.label}
-                  <span
-                    aria-hidden="true"
-                    className={`absolute inset-x-0 -bottom-0.5 h-[1.5px] origin-left rounded-full bg-sky-600 transition-transform duration-200 dark:bg-sky-300/90 ${
-                      isActive ? 'scale-x-100' : 'scale-x-0'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (item.id === 'projects' && route.view === 'home') {
+                        handleLinkClick('/', 'projects');
+                      } else if (
+                        item.id === 'projects' &&
+                        route.view !== 'home'
+                      ) {
+                        handleLinkClick('/projects');
+                      } else {
+                        handleLinkClick('/', item.sectionId);
+                      }
+                    }}
+                    className={`relative py-1 text-sm font-medium whitespace-nowrap shrink-0 transition-colors duration-200 ${
+                      isActive
+                        ? 'text-slate-950 dark:text-white'
+                        : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
                     }`}
-                  />
-                </a>
-              );
-            })}
-          </nav>
+                  >
+                    {item.label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active-underline"
+                        aria-hidden="true"
+                        transition={{
+                          duration: 0.24,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
+                        className="absolute inset-x-0 -bottom-0.5 h-[2px] rounded-full bg-sky-600 dark:bg-sky-300"
+                      />
+                    )}
+                  </a>
+                );
+              })}
+            </nav>
+          </LayoutGroup>
 
           {/* Zone 3: Animated Theme Toggle + Primary CTA / Mobile menu */}
           <div className="flex items-center gap-2.5 shrink-0">
