@@ -345,6 +345,21 @@ export function Navbar({
                   </a>
                 );
               })}
+              <div className="mt-2 border-t border-slate-900/[0.08] pt-2 dark:border-white/[0.08]">
+                <a
+                  href="/projects"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleLinkClick('/projects');
+                  }}
+                  className="flex min-h-[44px] items-center justify-between gap-3 rounded-xl border border-slate-900/15 bg-slate-900 px-4 text-sm font-medium text-white transition-colors hover:bg-slate-800 dark:border-white/15 dark:bg-white/[0.08] dark:hover:bg-white/[0.14]"
+                >
+                  <span>All Projects Archive</span>
+                  <span className="font-mono-tabular text-xs text-white/60">
+                    {PROJECTS.length}
+                  </span>
+                </a>
+              </div>
             </nav>
           </motion.div>
         )}
