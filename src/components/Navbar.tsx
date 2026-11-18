@@ -337,11 +337,6 @@ export function Navbar({
                     }`}
                   >
                     <span>{item.label}</span>
-                    {item.id === 'projects' && (
-                      <span className="font-mono-tabular text-xs text-slate-500 dark:text-slate-400">
-                        {PROJECTS.length}
-                      </span>
-                    )}
                   </a>
                 );
               })}
