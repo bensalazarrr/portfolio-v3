@@ -5,7 +5,9 @@ import { PORTFOLIO_PROFILE } from '../data/portfolio';
 import {
   SUGGESTED_QUESTIONS,
   answerPortfolioQuestion,
+  type AssistantContext,
   type AssistantResponse,
+  type AssistantTopic,
 } from '../utils/portfolioAssistant';
 
 interface Message {
@@ -13,6 +15,7 @@ interface Message {
   sender: 'assistant' | 'user';
   text: string;
   links?: AssistantResponse['links'];
+  topic?: AssistantTopic;
 }
 
 interface PortfolioAssistantProps {
@@ -29,6 +32,7 @@ export function PortfolioAssistant({ onNavigate }: PortfolioAssistantProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
   const [input, setInput] = useState('');
+  const [context, setContext] = useState<AssistantContext>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -50,15 +54,17 @@ export function PortfolioAssistant({ onNavigate }: PortfolioAssistantProps) {
       text: trimmed,
     };
 
-    const reply = answerPortfolioQuestion(trimmed);
+    const reply = answerPortfolioQuestion(trimmed, context);
     const assistantMsg: Message = {
       id: `a-${Date.now() + 1}`,
       sender: 'assistant',
       text: reply.text,
       links: reply.links,
+      topic: reply.topic,
     };
 
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
+    setContext({ topic: reply.topic, projectSlug: reply.projectSlug });
     setInput('');
   };
 
@@ -187,11 +193,15 @@ export function PortfolioAssistant({ onNavigate }: PortfolioAssistantProps) {
                 </div>
               ))}
 
-              {/* Suggested Quick Questions (shown when conversation is fresh) */}
-              {messages.length === 1 && (
+              {/* Suggested questions on a fresh chat, and again after a miss so
+                  an unmatched question isn't a dead end */}
+              {(messages.length === 1 ||
+                messages[messages.length - 1]?.topic === 'unknown') && (
                 <div className="pt-1">
                   <p className="mb-2 text-[11px] text-slate-500">
-                    Suggested questions
+                    {messages.length === 1
+                      ? 'Suggested questions'
+                      : 'Try one of these instead'}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {SUGGESTED_QUESTIONS.map((q) => (
