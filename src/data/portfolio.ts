@@ -82,7 +82,7 @@ export const PORTFOLIO_PROFILE = {
     'https://mail.google.com/mail/?view=cm&fs=1&to=benedictsalazar64@gmail.com',
   portrait: '/assets/aistudio/Natural_creator_portrait_on_charcoal_gradient_1fd595dc.png',
   portraitAlt: 'Portrait of John Benedict Salazar',
-  ogImage: '/assets/aistudio/og_00c62b9f.png',
+  ogImage: '/og-image.png',
   resumeUrl: null as string | null,
   heroIntro:
     'I’m a fourth-year IT student and web and mobile developer. I build practical web experiences and interactive applications, with foundational knowledge of networking and computer hardware.',
