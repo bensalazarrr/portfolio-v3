@@ -2,6 +2,7 @@ import { Menu, Moon, Sun, X } from 'lucide-react';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { PORTFOLIO_PROFILE, PROJECTS } from '../data/portfolio';
+import { BrandMark } from './BrandMark';
 
 export type AppRoute =
   | { view: 'home' }
@@ -154,17 +155,20 @@ export function Navbar({
         }`}
       >
         <div className="flex items-center justify-between gap-6 sm:gap-8">
-          {/* Zone 1: Single-line Brand Wordmark */}
+          {/* Zone 1: Brand mark + single-line wordmark */}
           <a
             href="/"
             onClick={(e) => {
               e.preventDefault();
               handleLinkClick('/');
             }}
-            className="font-display text-[15px] font-semibold tracking-tight text-slate-950 whitespace-nowrap shrink-0 transition-opacity hover:opacity-80 sm:text-base dark:text-white"
+            className="flex shrink-0 items-center gap-2.5 whitespace-nowrap text-slate-950 transition-opacity hover:opacity-80 dark:text-white"
           >
-            <span className="sm:hidden">J. B. Salazar</span>
-            <span className="hidden sm:inline">{PORTFOLIO_PROFILE.name}</span>
+            <BrandMark size={30} className="shrink-0" />
+            <span className="font-display text-[15px] font-semibold tracking-tight sm:text-base">
+              <span className="sm:hidden">J. B. Salazar</span>
+              <span className="hidden sm:inline">{PORTFOLIO_PROFILE.name}</span>
+            </span>
           </a>
 
           {/* Zone 2: Concise single-line text nav links */}

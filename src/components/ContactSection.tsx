@@ -1,6 +1,7 @@
 import { ArrowUp, ArrowUpRight, Check, Copy, Mail, MapPin, Phone } from 'lucide-react';
 import { useState } from 'react';
 import { PORTFOLIO_PROFILE } from '../data/portfolio';
+import { BrandMark } from './BrandMark';
 import { Reveal } from './Reveal';
 
 export function ContactSection() {
@@ -138,6 +139,7 @@ export function ContactSection() {
         {/* Bottom Copyright & Back to Top */}
         <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-slate-900/[0.07] pt-6 text-xs text-slate-500 sm:flex-row sm:items-center dark:border-white/[0.06]">
           <div className="flex flex-wrap items-center gap-2">
+            <BrandMark size={18} className="shrink-0" />
             <span>
               © {currentYear} {PORTFOLIO_PROFILE.name}
             </span>
