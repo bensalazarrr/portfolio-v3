@@ -117,6 +117,57 @@
   transition: border-color 300ms ease;
 }
 
+/*
+ * Top bar shell.
+ *
+ * The floating state used to be a bare `.glass-nav-floating` element, whose
+ * unlayered `transition` list (border-color, box-shadow only) overrode
+ * Tailwind's `transition-all`. Geometry therefore snapped in one direction.
+ * One explicit list here — on a class that exists in both states — keeps the
+ * shrink and the expand symmetric.
+ */
+.nav-shell {
+  background-color: rgba(246, 247, 251, 0.8);
+  border: 1px solid transparent;
+  box-shadow: inset 0 -1px 0 0 rgba(15, 23, 42, 0.07);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  transition:
+    max-width 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin-top 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 400ms ease,
+    background-color 400ms ease,
+    box-shadow 400ms ease;
+}
+
+.dark .nav-shell {
+  background-color: rgba(9, 10, 15, 0.75);
+  box-shadow: inset 0 -1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Scrolled: the bar detaches, narrows, and becomes a floating glass card. */
+.nav-shell.nav-shell-pinned {
+  background-color: var(--nav-floating-bg);
+  border-color: var(--nav-floating-border);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-highlight),
+    var(--nav-floating-shadow);
+}
+
+/*
+ * Palette swap. Transitions are disabled for the frame that repaints the new
+ * palette, so mobile devices repaint once instead of interpolating colour on
+ * every element at the same time. App.tsx adds and removes this class.
+ */
+.theme-switching,
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
 /* Mobile: lighter backdrop blur keeps theme flips and scroll compositing smooth */
 @media (max-width: 639px) {
   .glass-panel,
@@ -126,6 +177,11 @@
   }
 
   .glass-nav-floating {
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+  }
+
+  .nav-shell {
     backdrop-filter: blur(12px) saturate(130%);
     -webkit-backdrop-filter: blur(12px) saturate(130%);
   }
@@ -222,6 +278,7 @@
   .glass-panel,
   .glass-panel-interactive,
   .glass-nav-floating,
+  .nav-shell,
   .glass-surface-subtle {
     transition: none !important;
   }

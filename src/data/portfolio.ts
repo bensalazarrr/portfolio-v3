@@ -278,6 +278,34 @@ export const PROJECTS: Project[] = [
   },
   {
     index: '05',
+    slug: 'portfolio-v1',
+    title: 'Portfolio V1',
+    subtitle: 'The first edition, in a corporate register',
+    category: 'Personal website · Design',
+    filterGroup: 'web-apps',
+    format: 'Personal portfolio website',
+    featured: false,
+    liveUrl: 'https://benedict-salazar-portfolio.vercel.app/',
+    summary:
+      'The first edition of this portfolio, written in a quiet corporate register: a monochrome palette, a monospaced navigation bar, and a single-column reading rhythm that keeps the work in front of the reader.',
+    purpose:
+      'Give recruiters and clients a sober, scannable record of the work and background, with nothing competing with the content for attention.',
+    approach:
+      'A restrained design system carries the whole site: near-black and off-white surfaces, Geist for reading and Geist Mono for labels, one 1060px container, and a portrait-and-headline hero. Dark is the default, with light and system following the visitor’s choice. Every page is statically exported, so it loads as flat files.',
+    features: [
+      'Monochrome corporate design system',
+      'Home, Projects, Journey, and Stack sections',
+      'Portrait-led hero with a mono navigation bar',
+      'Dark by default, with light and system options',
+      'Static export for flat, fast delivery',
+    ],
+    technologies: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'],
+    image: '/assets/aistudio/portfolio-v1.JPG',
+    imageCaption:
+      'Portfolio V1 hero: a monospaced Home, Projects, Journey, and Stack navigation above a large headline, portrait, and three highlight cards',
+  },
+  {
+    index: '06',
     slug: 'portfolio-v2',
     title: 'Portfolio V2',
     subtitle: 'A bolder take on this portfolio',
@@ -304,7 +332,36 @@ export const PROJECTS: Project[] = [
       'Portfolio V2 homepage with bold, colorful cards introducing Benedict, his specialty, and current work',
   },
   {
-    index: '06',
+    index: '07',
+    slug: 'nexus',
+    title: 'Nexus',
+    subtitle: 'A local-first AI workspace',
+    category: 'AI tool · Developer workspace',
+    filterGroup: 'tools-concepts',
+    format: 'Local-first AI workspace',
+    featured: false,
+    summary:
+      'NEXUS is a local-first, free-first AI workspace that lets one person research, plan, and build software with many AI models, without a required subscription.',
+    purpose:
+      'One workspace. Multiple AI models. Shared project context. Different responsibilities. Complete control. No required subscriptions.',
+    approach:
+      'Runs on the local machine and talks to whichever model provider is chosen, so a project keeps one shared context while different models take on different jobs. Ask, Plan, and Build are separate work modes over the same project, and a project context pane hands the model the repository’s own AGENTS.md so it works from that project’s instructions rather than a generic prompt.',
+    features: [
+      'Ask, Plan, and Build modes over one project',
+      'Multiple AI models with shared project context',
+      'Project context fed from the repository’s AGENTS.md',
+      'Providers managed locally, with free models first',
+      'Runs on 127.0.0.1 — no required subscription',
+    ],
+    technologies: [],
+    image: '/assets/aistudio/nexus.JPG',
+    imageCaption:
+      'Nexus workspace with Ask, Plan, and Build modes, a model picker in the composer, and a project context pane showing AGENTS.md',
+    imageNote:
+      'Runs on 127.0.0.1. The visible notice in the context pane is Windows activation, unrelated to the app.',
+  },
+  {
+    index: '08',
     slug: 'kislap',
     title: 'Kislap',
     subtitle: 'One QR code, one shared event album',
@@ -332,7 +389,7 @@ export const PROJECTS: Project[] = [
       'Kislap landing page with the headline Scan. Share. Kislap. and an event album preview',
   },
   {
-    index: '07',
+    index: '09',
     slug: 'petcha',
     title: 'Petcha',
     subtitle: 'Personal Deadline & Life Admin App',
@@ -360,7 +417,7 @@ export const PROJECTS: Project[] = [
     isPortraitMedia: true,
   },
   {
-    index: '08',
+    index: '10',
     slug: 'panitikan-quest',
     title: 'Panitikan Quest',
     subtitle: 'Baybayin mo, Baybayin ko!',
@@ -386,7 +443,7 @@ export const PROJECTS: Project[] = [
       'Panitikan Quest homepage with the introduction Our stories. Our script. Your next quest. and illustrated Baybayin cards',
   },
   {
-    index: '09',
+    index: '11',
     slug: 'viral-frame',
     title: 'Viral Frame',
     subtitle: 'A local timestamp clipper',
@@ -412,7 +469,7 @@ export const PROJECTS: Project[] = [
     imageCaption: 'Viral Frame local video clipping workspace dashboard',
   },
   {
-    index: '10',
+    index: '12',
     slug: 'sample-auto',
     title: 'Sample Auto',
     subtitle: 'Automotive business website concept',
@@ -438,7 +495,7 @@ export const PROJECTS: Project[] = [
     imageCaption: 'Sample Auto automotive workshop concept landing page',
   },
   {
-    index: '11',
+    index: '13',
     slug: 'sample-coffeeshop',
     title: 'Sample Café',
     subtitle: 'Local coffee shop website concept',

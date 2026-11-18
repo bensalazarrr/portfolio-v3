@@ -147,10 +147,10 @@ export function Navbar({
   return (
     <header className="fixed inset-x-0 top-[2.5px] z-40 px-3 sm:px-6">
       <div
-        className={`mx-auto transition-all duration-300 ease-out ${
+        className={`nav-shell mx-auto ${
           scrolled
-            ? 'mt-2.5 max-w-[1060px] rounded-2xl px-4 py-2.5 sm:px-6 glass-nav-floating'
-            : 'mt-0 max-w-[1140px] rounded-none border-b border-slate-900/[0.07] bg-[#f6f7fb]/80 px-2 py-3.5 backdrop-blur-md sm:px-4 sm:py-4 dark:border-white/[0.06] dark:bg-[#090a0f]/75'
+            ? 'nav-shell-pinned mt-2.5 max-w-[1060px] rounded-2xl px-4 py-2.5 sm:px-6'
+            : 'mt-0 max-w-[1140px] rounded-none px-2 py-3.5 sm:px-4 sm:py-4'
         }`}
       >
         <div className="flex items-center justify-between gap-6 sm:gap-8">

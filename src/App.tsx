@@ -4,7 +4,7 @@
  */
 
 import { MotionConfig } from 'motion/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AboutSection } from './components/AboutSection';
 import { AmbientBackground } from './components/AmbientBackground';
 import { ContactSection } from './components/ContactSection';
@@ -52,6 +52,7 @@ export default function App() {
     parsePath(window.location.pathname)
   );
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
+  const themeSwitchRef = useRef(false);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -65,9 +66,25 @@ export default function App() {
     } catch {
       // Ignore storage errors
     }
+
+    // The new palette has been committed, so transitions can come back. Waiting
+    // two frames guarantees the repaint happens while they are still off, which
+    // is what keeps the flip cheap on mobile.
+    if (themeSwitchRef.current) {
+      themeSwitchRef.current = false;
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          root.classList.remove('theme-switching');
+        });
+      });
+    }
   }, [theme]);
 
   const toggleTheme = useCallback(() => {
+    // Drop every colour transition for the frame that swaps the palette;
+    // animating hundreds of elements at once is what makes mobile feel laggy.
+    themeSwitchRef.current = true;
+    document.documentElement.classList.add('theme-switching');
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   }, []);
 
@@ -119,6 +136,39 @@ export default function App() {
     }
   }, []);
 
+  // Theme lives on <html>, so only the ambient canvas and the toggle label
+  // consume it. Memoizing the page body keeps a theme flip from re-rendering
+  // every section — the biggest remaining cost on mobile.
+  const page = useMemo(() => {
+    if (route.view === 'home') {
+      return (
+        <main id="main-content">
+          <HeroSection onNavigate={navigate} />
+          <AboutSection onNavigate={navigate} />
+          <SkillsSection />
+          <FeaturedProjectsSection onNavigate={navigate} />
+          <JourneySection />
+        </main>
+      );
+    }
+
+    if (route.view === 'projects') {
+      return <ProjectsPage onNavigate={navigate} />;
+    }
+
+    return <ProjectDetailPage slug={route.slug} onNavigate={navigate} />;
+  }, [route, navigate]);
+
+  const pageTail = useMemo(
+    () => (
+      <>
+        <ContactSection />
+        <PortfolioAssistant onNavigate={navigate} />
+      </>
+    ),
+    [navigate]
+  );
+
   return (
     <MotionConfig reducedMotion="user">
       <div className="relative min-h-screen text-slate-900 dark:text-[#f4f4f6]">
@@ -131,24 +181,9 @@ export default function App() {
           onNavigate={navigate}
         />
 
-        {route.view === 'home' && (
-          <main id="main-content">
-            <HeroSection onNavigate={navigate} />
-            <AboutSection onNavigate={navigate} />
-            <SkillsSection />
-            <FeaturedProjectsSection onNavigate={navigate} />
-            <JourneySection />
-          </main>
-        )}
+        {page}
 
-        {route.view === 'projects' && <ProjectsPage onNavigate={navigate} />}
-
-        {route.view === 'project-detail' && (
-          <ProjectDetailPage slug={route.slug} onNavigate={navigate} />
-        )}
-
-        <ContactSection />
-        <PortfolioAssistant onNavigate={navigate} />
+        {pageTail}
       </div>
     </MotionConfig>
   );
