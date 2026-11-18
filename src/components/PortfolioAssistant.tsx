@@ -79,7 +79,7 @@ export function PortfolioAssistant({ onNavigate }: PortfolioAssistantProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.95 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            aria-label="Open Ben's portfolio assistant"
+            aria-label={`Open ${PORTFOLIO_PROFILE.nickname}'s portfolio assistant`}
             className="glass-nav-floating group inline-flex min-h-[44px] items-center gap-2.5 rounded-full px-4 py-2.5 text-xs font-medium text-slate-900 whitespace-nowrap transition-all duration-200 hover:-translate-y-0.5 hover:border-sky-600/35 hover:text-slate-950 active:scale-[0.98] dark:text-slate-100 dark:hover:border-sky-300/35 dark:hover:text-white"
           >
             <MessageSquare className="h-4 w-4 text-sky-600 transition-transform duration-200 group-hover:scale-110 dark:text-sky-300" />

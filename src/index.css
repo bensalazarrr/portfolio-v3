@@ -45,7 +45,6 @@
     color: var(--text-canvas);
     scroll-padding-top: 76px;
     overflow-x: clip;
-    transition: background-color 350ms ease, color 250ms ease;
   }
 
   body {
@@ -53,7 +52,6 @@
     color: var(--text-canvas);
     line-height: 1.65;
     overflow-x: clip;
-    transition: background-color 350ms ease, color 250ms ease;
   }
 
   h1, h2, h3, h4, .font-display {
@@ -76,7 +74,7 @@
   box-shadow:
     inset 0 1px 0 0 var(--glass-highlight),
     var(--glass-shadow);
-  transition: background 320ms ease, border-color 300ms ease, box-shadow 300ms ease;
+  transition: border-color 300ms ease, box-shadow 300ms ease;
 }
 
 .glass-panel-interactive {
@@ -90,8 +88,7 @@
   transition:
     transform 220ms var(--ease-out-expo),
     border-color 220ms ease,
-    box-shadow 260ms var(--ease-out-expo),
-    background 320ms ease;
+    box-shadow 260ms var(--ease-out-expo);
 }
 
 .glass-panel-interactive:hover {
@@ -110,7 +107,6 @@
     inset 0 1px 0 0 var(--glass-highlight),
     var(--nav-floating-shadow);
   transition:
-    background-color 320ms ease,
     border-color 300ms ease,
     box-shadow 300ms ease;
 }
@@ -118,7 +114,21 @@
 .glass-surface-subtle {
   background: var(--surface-subtle-bg);
   border: 1px solid var(--surface-subtle-border);
-  transition: background-color 320ms ease, border-color 300ms ease;
+  transition: border-color 300ms ease;
+}
+
+/* Mobile: lighter backdrop blur keeps theme flips and scroll compositing smooth */
+@media (max-width: 639px) {
+  .glass-panel,
+  .glass-panel-interactive {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .glass-nav-floating {
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+  }
 }
 
 /* Subtle ambient background drift (GPU-composited only) */
@@ -175,12 +185,10 @@
 
 .animate-ambient-a {
   animation: ambient-float-a 22s ease-in-out infinite;
-  will-change: transform;
 }
 
 .animate-ambient-b {
   animation: ambient-float-b 28s ease-in-out infinite;
-  will-change: transform;
 }
 
 .animate-live-icon-a {

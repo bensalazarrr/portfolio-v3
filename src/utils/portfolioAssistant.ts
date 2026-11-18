@@ -197,7 +197,7 @@ export function answerPortfolioQuestion(rawInput: string): AssistantResponse {
 
     return {
       text: `His portfolio includes ${PROJECTS.length} projects. Featured on the home page are ${featuredTitles}. The full collection also includes ${others}.`,
-      links: [{ label: 'View all 11 projects', href: '/projects' }],
+      links: [{ label: `View all ${PROJECTS.length} projects`, href: '/projects' }],
     };
   }
 
@@ -207,7 +207,7 @@ export function answerPortfolioQuestion(rawInput: string): AssistantResponse {
       (g) => `${g.category}: ${g.tools.map((t) => t.name).join(', ')}`
     ).join(' · ');
     return {
-      text: `${PORTFOLIO_PROFILE.shortName}'s stack spans 8 areas — ${summary}.`,
+      text: `${PORTFOLIO_PROFILE.shortName}'s stack spans ${STACK_GROUPS.length} areas — ${summary}.`,
     };
   }
 
@@ -230,13 +230,16 @@ export function answerPortfolioQuestion(rawInput: string): AssistantResponse {
 
   // Question asking if he knows an unlisted technology (e.g. "Does he know Rust / Swift / Ruby?")
   if (/\b(does he|has he|experience with|know|use)\b/.test(q)) {
+    const documentedStack = STACK_GROUPS.map(
+      (g) => `${g.category} (${g.tools.map((t) => t.name).join(', ')})`
+    ).join(', ');
     return {
-      text: `I don't have information confirming that in ${PORTFOLIO_PROFILE.shortName}'s portfolio data. His documented tools cover Web & Mobile (HTML, CSS, JavaScript, TypeScript, React, Tailwind CSS, React Native, Expo), Programming (Java, C, SQL), Databases & Backend (PostgreSQL, Supabase, Firebase, MariaDB, Node.js, Prisma, GraphQL), Dev Tools (Git, GitHub, Docker, XAMPP, Vercel, Netlify), WordPress/Wix, and Cisco Packet Tracer.`,
+      text: `I don't have information confirming that in ${PORTFOLIO_PROFILE.shortName}'s portfolio data. His documented tools cover ${documentedStack}.`,
     };
   }
 
   // Strict fallback — never invent or hallucinate
   return {
-    text: `That information isn't included in ${PORTFOLIO_PROFILE.shortName}'s portfolio data, so I can't answer it accurately. You can ask me about his bio, 11 projects, tech stack, education & certifications, or contact details.`,
+    text: `That information isn't included in ${PORTFOLIO_PROFILE.shortName}'s portfolio data, so I can't answer it accurately. You can ask me about his bio, ${PROJECTS.length} projects, tech stack, education & certifications, or contact details.`,
   };
 }

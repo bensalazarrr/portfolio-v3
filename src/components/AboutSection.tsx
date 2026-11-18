@@ -1,10 +1,41 @@
-import { ArrowRight, GraduationCap, Network, ShieldCheck } from 'lucide-react';
-import { PORTFOLIO_PROFILE } from '../data/portfolio';
+import {
+  ArrowRight,
+  GraduationCap,
+  Network,
+  ShieldCheck,
+  type LucideIcon,
+} from 'lucide-react';
+import {
+  ABOUT_FOCUS,
+  PORTFOLIO_PROFILE,
+  type AboutFocusItem,
+} from '../data/portfolio';
 import { Reveal } from './Reveal';
 
 interface AboutSectionProps {
   onNavigate: (path: string, sectionId?: string) => void;
 }
+
+const FOCUS_ICONS: Record<
+  AboutFocusItem['id'],
+  { Icon: LucideIcon; accentClass: string }
+> = {
+  education: {
+    Icon: GraduationCap,
+    accentClass:
+      'bg-sky-500/10 text-sky-700 dark:bg-white/[0.05] dark:text-sky-300',
+  },
+  certification: {
+    Icon: ShieldCheck,
+    accentClass:
+      'bg-indigo-500/10 text-indigo-700 dark:bg-white/[0.05] dark:text-indigo-300',
+  },
+  networking: {
+    Icon: Network,
+    accentClass:
+      'bg-slate-900/[0.05] text-slate-700 dark:bg-white/[0.05] dark:text-slate-200',
+  },
+};
 
 export function AboutSection({ onNavigate }: AboutSectionProps) {
   return (
@@ -55,71 +86,34 @@ export function AboutSection({ onNavigate }: AboutSectionProps) {
 
           {/* Grounded Developer Focus Blocks */}
           <div className="space-y-3.5">
-            <Reveal delay={0.12}>
-              <div className="glass-panel-interactive rounded-2xl p-5">
-                <div className="flex items-start gap-3.5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-900/10 bg-sky-500/10 text-sky-700 dark:border-white/10 dark:bg-white/[0.05] dark:text-sky-300">
-                    <GraduationCap className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-sm font-semibold text-slate-950 dark:text-white">
-                      BS Information Technology
-                    </h3>
-                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                      Our Lady of Lourdes College · 4th Year (2024 — Present)
-                    </p>
-                    <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-                      Expanding skills across web & mobile software engineering,
-                      database systems, and network infrastructure.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
+            {ABOUT_FOCUS.map((item, idx) => {
+              const { Icon, accentClass } = FOCUS_ICONS[item.id];
 
-            <Reveal delay={0.18}>
-              <div className="glass-panel-interactive rounded-2xl p-5">
-                <div className="flex items-start gap-3.5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-900/10 bg-indigo-500/10 text-indigo-700 dark:border-white/10 dark:bg-white/[0.05] dark:text-indigo-300">
-                    <ShieldCheck className="h-5 w-5" />
+              return (
+                <Reveal key={item.id} delay={0.12 + idx * 0.06}>
+                  <div className="glass-panel-interactive rounded-2xl p-5">
+                    <div className="flex items-start gap-3.5">
+                      <div
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-900/10 dark:border-white/10 ${accentClass}`}
+                      >
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-display text-sm font-semibold text-slate-950 dark:text-white">
+                          {item.title}
+                        </h3>
+                        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                          {item.meta}
+                        </p>
+                        <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-display text-sm font-semibold text-slate-950 dark:text-white">
-                      TESDA Computer Systems Servicing NC II
-                    </h3>
-                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                      Certified · Hardware & System Support
-                    </p>
-                    <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-                      Hands-on computer assembly, hardware/software
-                      troubleshooting, printer setup, and documentation.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.24}>
-              <div className="glass-panel-interactive rounded-2xl p-5">
-                <div className="flex items-start gap-3.5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-900/10 bg-slate-900/[0.05] text-slate-700 dark:border-white/10 dark:bg-white/[0.05] dark:text-slate-200">
-                    <Network className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-sm font-semibold text-slate-950 dark:text-white">
-                      Networking Foundation
-                    </h3>
-                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                      Cisco Networking Academy · Packet Tracer
-                    </p>
-                    <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-                      Practical grounding in subnetting, routing, and port
-                      forwarding alongside software delivery.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </div>

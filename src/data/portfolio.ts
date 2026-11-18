@@ -10,6 +10,13 @@ export interface HighlightItem {
   detail: string;
 }
 
+export interface AboutFocusItem {
+  id: 'education' | 'certification' | 'networking';
+  title: string;
+  meta: string;
+  description: string;
+}
+
 export interface Project {
   index: string;
   slug: string;
@@ -67,6 +74,7 @@ export const PORTFOLIO_PROFILE = {
   roleTitle: 'Web & Mobile Developer',
   tagline: 'Practical web experiences. Thoughtfully built.',
   location: 'Valenzuela City, Metro Manila, Philippines',
+  shortLocation: 'Valenzuela City · PH',
   email: 'benedictsalazar64@gmail.com',
   phone: '0963 652 7633',
   phoneHref: 'tel:+639636527633',
@@ -129,6 +137,30 @@ export const PORTFOLIO_PROFILE = {
     },
   ] as SocialLink[],
 };
+
+export const ABOUT_FOCUS: AboutFocusItem[] = [
+  {
+    id: 'education',
+    title: 'BS Information Technology',
+    meta: 'Our Lady of Lourdes College · 4th Year (2024 — Present)',
+    description:
+      'Expanding skills across web & mobile software engineering, database systems, and network infrastructure.',
+  },
+  {
+    id: 'certification',
+    title: 'TESDA Computer Systems Servicing NC II',
+    meta: 'Certified · Hardware & System Support',
+    description:
+      'Hands-on computer assembly, hardware/software troubleshooting, printer setup, and documentation.',
+  },
+  {
+    id: 'networking',
+    title: 'Networking Foundation',
+    meta: 'Cisco Networking Academy · Packet Tracer',
+    description:
+      'Practical grounding in subnetting, routing, and port forwarding alongside software delivery.',
+  },
+];
 
 export const PROJECTS: Project[] = [
   {

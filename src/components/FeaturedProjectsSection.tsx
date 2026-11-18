@@ -11,7 +11,16 @@ export function FeaturedProjectsSection({
   onNavigate,
 }: FeaturedProjectsSectionProps) {
   const featuredProjects = PROJECTS.slice(0, 2);
-  const remainingCount = PROJECTS.length - featuredProjects.length;
+  const remainingProjects = PROJECTS.slice(featuredProjects.length);
+  const remainingCount = remainingProjects.length;
+
+  // Keep the teaser sentence in sync with the data instead of naming projects
+  // by hand — it drifts the moment a project is added, renamed, or reordered.
+  const previewTitles = remainingProjects.slice(0, 4).map((p) => p.title);
+  const remainingLabel =
+    remainingProjects.length > previewTitles.length
+      ? `${previewTitles.join(', ')}, and ${remainingProjects.length - previewTitles.length} more`
+      : previewTitles.join(', ');
 
   return (
     <section
@@ -190,8 +199,7 @@ export function FeaturedProjectsSection({
                 Explore {remainingCount} more projects in the full collection
               </p>
               <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
-                Includes Orbit, 7nCloud, Kislap, Petcha, Panitikan Quest, Viral
-                Frame, and concept builds.
+                Includes {remainingLabel}.
               </p>
             </div>
 

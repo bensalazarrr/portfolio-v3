@@ -79,9 +79,13 @@ export function AmbientBackground({ theme }: AmbientBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const themeRef = useRef(theme);
   const redrawRef = useRef<(() => void) | null>(null);
+  // Hold the canvas still briefly after a theme change so the browser can
+  // repaint the page without competing with the animation loop.
+  const pauseUntilRef = useRef(0);
 
   useEffect(() => {
     themeRef.current = theme;
+    pauseUntilRef.current = performance.now() + 260;
     redrawRef.current?.();
   }, [theme]);
 
@@ -98,7 +102,10 @@ export function AmbientBackground({ theme }: AmbientBackgroundProps) {
 
     let width = window.innerWidth;
     let height = window.innerHeight;
-    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Smaller screens cap the pixel ratio lower: the dot field is subtle
+    // enough that 1.5 is indistinguishable and far cheaper to draw.
+    const getDprCap = () => (window.innerWidth < 640 ? 1.5 : 2);
+    let dpr = Math.min(window.devicePixelRatio || 1, getDprCap());
     let rafId = 0;
 
     // Smoothly damped cursor state
@@ -114,7 +121,7 @@ export function AmbientBackground({ theme }: AmbientBackgroundProps) {
     const resize = () => {
       width = window.innerWidth;
       height = window.innerHeight;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, getDprCap());
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       canvas.style.width = `${width}px`;
@@ -136,6 +143,14 @@ export function AmbientBackground({ theme }: AmbientBackgroundProps) {
       const t = timeMs * 0.001;
       const isDark = themeRef.current === 'dark';
       const isReduced = reducedMotionQuery.matches;
+
+      // Skip drawing while a theme flip is repainting the page.
+      if (timeMs < pauseUntilRef.current) {
+        if (!isReduced && !document.hidden) {
+          rafId = requestAnimationFrame(drawFrame);
+        }
+        return;
+      }
 
       ctx.clearRect(0, 0, width, height);
 
@@ -325,11 +340,11 @@ export function AmbientBackground({ theme }: AmbientBackgroundProps) {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#f6f7fb] transition-colors duration-300 dark:bg-[#090a0f]"
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#f6f7fb] dark:bg-[#090a0f]"
     >
       {/* Subtle drifting atmospheric radial gradients */}
       <div
-        className="animate-ambient-a absolute -left-[12%] -top-[18%] h-[540px] w-[540px] rounded-full opacity-50 blur-[130px] sm:h-[680px] sm:w-[680px] dark:opacity-35"
+        className="animate-ambient-a absolute -left-[12%] -top-[18%] h-[540px] w-[540px] rounded-full opacity-50 blur-[90px] sm:h-[680px] sm:w-[680px] sm:blur-[130px] dark:opacity-35"
         style={{
           background:
             'radial-gradient(circle, rgba(56, 189, 248, 0.24) 0%, rgba(30, 58, 138, 0.1) 45%, transparent 72%)',
@@ -337,7 +352,7 @@ export function AmbientBackground({ theme }: AmbientBackgroundProps) {
       />
 
       <div
-        className="animate-ambient-b absolute -right-[14%] top-[24%] h-[500px] w-[500px] rounded-full opacity-40 blur-[140px] sm:h-[640px] sm:w-[640px] dark:opacity-28"
+        className="animate-ambient-b absolute -right-[14%] top-[24%] h-[500px] w-[500px] rounded-full opacity-40 blur-[90px] sm:h-[640px] sm:w-[640px] sm:blur-[140px] dark:opacity-28"
         style={{
           background:
             'radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(15, 23, 42, 0.08) 50%, transparent 75%)',
@@ -345,7 +360,7 @@ export function AmbientBackground({ theme }: AmbientBackgroundProps) {
       />
 
       <div
-        className="animate-ambient-a absolute bottom-[-16%] left-[25%] h-[420px] w-[620px] rounded-full opacity-28 blur-[140px] dark:opacity-22"
+        className="animate-ambient-a absolute bottom-[-16%] left-[25%] hidden h-[420px] w-[620px] rounded-full opacity-28 blur-[140px] sm:block dark:opacity-22"
         style={{
           animationDelay: '-9s',
           background:

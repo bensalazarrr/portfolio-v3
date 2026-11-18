@@ -237,6 +237,25 @@ export function ProjectDetailPage({
                   </li>
                 ))}
               </ul>
+
+              {/* Renders only once a project's `technologies` array is filled in */}
+              {project.technologies.length > 0 && (
+                <div className="mt-5 border-t border-slate-900/[0.07] pt-4 dark:border-white/[0.07]">
+                  <h3 className="font-display text-sm font-semibold text-slate-950 dark:text-white">
+                    Built with
+                  </h3>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {project.technologies.map((technology) => (
+                      <span
+                        key={technology}
+                        className="inline-flex items-center rounded-lg border border-slate-900/[0.09] bg-slate-900/[0.03] px-2.5 py-1 text-xs font-medium text-slate-800 dark:border-white/[0.08] dark:bg-white/[0.03] dark:text-slate-200"
+                      >
+                        {technology}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </Reveal>
         </div>

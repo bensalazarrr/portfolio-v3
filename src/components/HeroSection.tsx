@@ -40,7 +40,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
               transition={{ duration: 0.55, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
               className="font-display text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl lg:text-[3.6rem] lg:leading-[1.06] dark:text-white"
             >
-              John Benedict Salazar
+              {PORTFOLIO_PROFILE.name}
               <span className="text-slate-400 dark:text-slate-500">.</span>
             </motion.h1>
 
@@ -141,7 +141,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
                 {PORTFOLIO_PROFILE.name}
               </span>
               <span className="font-mono-tabular text-[11px] text-slate-500 dark:text-slate-400">
-                Valenzuela City · PH
+                {PORTFOLIO_PROFILE.shortLocation}
               </span>
             </div>
           </div>

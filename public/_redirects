@@ -1,0 +1,4 @@
+# SPA fallback for Netlify / Cloudflare Pages.
+# Routes like /projects/orbit are handled client-side in src/App.tsx,
+# so every unmatched path must serve the app shell.
+/*    /index.html   200

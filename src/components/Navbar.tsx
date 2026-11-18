@@ -1,7 +1,7 @@
 import { Menu, Moon, Sun, X } from 'lucide-react';
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
-import { PORTFOLIO_PROFILE } from '../data/portfolio';
+import { PORTFOLIO_PROFILE, PROJECTS } from '../data/portfolio';
 
 export type AppRoute =
   | { view: 'home' }
@@ -248,7 +248,7 @@ export function Navbar({
                     initial={{ opacity: 0, rotate: -65, scale: 0.65 }}
                     animate={{ opacity: 1, rotate: 0, scale: 1 }}
                     exit={{ opacity: 0, rotate: 65, scale: 0.65 }}
-                    transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.14, ease: [0.16, 1, 0.3, 1] }}
                     className="flex items-center justify-center"
                   >
                     <Moon className="h-[17px] w-[17px]" />
@@ -259,7 +259,7 @@ export function Navbar({
                     initial={{ opacity: 0, rotate: 65, scale: 0.65 }}
                     animate={{ opacity: 1, rotate: 0, scale: 1 }}
                     exit={{ opacity: 0, rotate: -65, scale: 0.65 }}
-                    transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.14, ease: [0.16, 1, 0.3, 1] }}
                     className="flex items-center justify-center text-amber-600"
                   >
                     <Sun className="h-[18px] w-[18px]" />
@@ -339,24 +339,12 @@ export function Navbar({
                     <span>{item.label}</span>
                     {item.id === 'projects' && (
                       <span className="font-mono-tabular text-xs text-slate-500 dark:text-slate-400">
-                        11
+                        {PROJECTS.length}
                       </span>
                     )}
                   </a>
                 );
               })}
-              <div className="mt-2 border-t border-slate-900/[0.08] pt-2 dark:border-white/[0.08]">
-                <a
-                  href="/projects"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleLinkClick('/projects');
-                  }}
-                  className="flex min-h-[44px] items-center justify-center rounded-xl border border-slate-900/15 bg-slate-900 px-4 text-sm font-medium text-white transition-colors hover:bg-slate-800 dark:border-white/15 dark:bg-white/[0.08] dark:hover:bg-white/[0.14]"
-                >
-                  All Projects Archive
-                </a>
-              </div>
             </nav>
           </motion.div>
         )}
