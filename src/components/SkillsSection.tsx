@@ -1,14 +1,251 @@
-import { useState } from 'react';
+import { Check, ChevronDown, ListFilter } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { STACK_GROUPS } from '../data/portfolio';
 import { Reveal } from './Reveal';
 
+const ALL = 'all';
+
+interface FilterOption {
+  id: string;
+  label: string;
+  count: number;
+}
+
+interface StackFilterProps {
+  options: FilterOption[];
+  value: string;
+  onChange: (id: string) => void;
+}
+
+/**
+ * Category picker for the stack grid. A dropdown rather than a row of chips:
+ * ten categories wrap into three lines on a phone, and the list keeps growing
+ * with every group added.
+ */
+function StackFilter({ options, value, onChange }: StackFilterProps) {
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const listId = useId();
+
+  const selectedIndex = Math.max(
+    0,
+    options.findIndex((option) => option.id === value)
+  );
+  const selected = options[selectedIndex];
+
+  const openMenu = () => {
+    setActiveIndex(selectedIndex);
+    setOpen(true);
+  };
+
+  const close = (returnFocus = true) => {
+    setOpen(false);
+    if (returnFocus) {
+      triggerRef.current?.focus();
+    }
+  };
+
+  const choose = (index: number) => {
+    onChange(options[index].id);
+    close();
+  };
+
+  // Move focus into the list so the arrow keys work straight away.
+  useEffect(() => {
+    if (open) {
+      listRef.current?.focus();
+    }
+  }, [open]);
+
+  // Ten options exceed the menu's height cap, so keep the active one visible
+  // when arrowing or hovering. Scroll the menu only, never the page.
+  useEffect(() => {
+    if (!open) return;
+
+    const list = listRef.current;
+    const option = list?.querySelector<HTMLElement>(
+      `[data-index="${activeIndex}"]`
+    );
+    if (!list || !option) return;
+
+    const top = option.offsetTop;
+    const bottom = top + option.offsetHeight;
+    if (top < list.scrollTop) {
+      list.scrollTop = top;
+    } else if (bottom > list.scrollTop + list.clientHeight) {
+      list.scrollTop = bottom - list.clientHeight;
+    }
+  }, [open, activeIndex]);
+
+  // A pointer press anywhere else dismisses the menu.
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!wrapRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [open]);
+
+  const handleTriggerKeyDown = (event: React.KeyboardEvent) => {
+    if (
+      event.key === 'ArrowDown' ||
+      event.key === 'ArrowUp' ||
+      event.key === 'Enter' ||
+      event.key === ' '
+    ) {
+      event.preventDefault();
+      openMenu();
+    }
+  };
+
+  const handleListKeyDown = (event: React.KeyboardEvent) => {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        setActiveIndex((index) => (index + 1) % options.length);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        setActiveIndex(
+          (index) => (index - 1 + options.length) % options.length
+        );
+        break;
+      case 'Home':
+        event.preventDefault();
+        setActiveIndex(0);
+        break;
+      case 'End':
+        event.preventDefault();
+        setActiveIndex(options.length - 1);
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        choose(activeIndex);
+        break;
+      case 'Escape':
+        event.preventDefault();
+        close();
+        break;
+      case 'Tab':
+        // Closing removes the focused node, so hand focus back to the trigger
+        // instead of letting it fall to <body>.
+        event.preventDefault();
+        close();
+        break;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <div ref={wrapRef} className="relative w-full sm:w-[248px]">
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={open ? listId : undefined}
+        aria-label={`Filter technologies by category: ${selected.label}`}
+        onClick={() => (open ? close() : openMenu())}
+        onKeyDown={handleTriggerKeyDown}
+        className="flex min-h-[44px] w-full items-center gap-2.5 rounded-xl border border-slate-900/[0.09] bg-white/70 px-3.5 text-left text-sm font-medium text-slate-800 transition-colors hover:border-slate-900/20 hover:text-slate-950 dark:border-white/[0.09] dark:bg-white/[0.04] dark:text-slate-200 dark:hover:border-white/20 dark:hover:text-white"
+      >
+        <ListFilter className="h-4 w-4 shrink-0 text-slate-500 dark:text-slate-400" />
+        <span className="min-w-0 flex-1 truncate">{selected.label}</span>
+        <ChevronDown
+          aria-hidden="true"
+          className={`h-4 w-4 shrink-0 text-slate-500 transition-transform duration-200 dark:text-slate-400 ${
+            open ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            ref={listRef}
+            id={listId}
+            role="listbox"
+            aria-label="Technology categories"
+            aria-activedescendant={`${listId}-${options[activeIndex].id}`}
+            tabIndex={-1}
+            onKeyDown={handleListKeyDown}
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            className="glass-nav-floating absolute right-0 z-30 mt-2 max-h-[min(340px,60vh)] w-full min-w-[240px] overflow-y-auto overscroll-contain rounded-xl p-1.5 outline-none"
+          >
+            {options.map((option, index) => {
+              const isSelected = option.id === value;
+              const isActive = index === activeIndex;
+
+              return (
+                <div
+                  key={option.id}
+                  id={`${listId}-${option.id}`}
+                  data-index={index}
+                  role="option"
+                  aria-selected={isSelected}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onClick={() => choose(index)}
+                  className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                    isSelected
+                      ? 'bg-slate-900 font-medium text-white dark:bg-white dark:text-[#090a0f]'
+                      : isActive
+                        ? 'bg-slate-900/[0.06] text-slate-950 dark:bg-white/[0.07] dark:text-white'
+                        : 'text-slate-700 dark:text-slate-300'
+                  }`}
+                >
+                  <span className="truncate">{option.label}</span>
+                  <span className="flex shrink-0 items-center gap-2">
+                    <span
+                      className={`font-mono-tabular text-[11px] ${
+                        isSelected
+                          ? 'text-white/70 dark:text-[#090a0f]/60'
+                          : 'text-slate-400 dark:text-slate-500'
+                      }`}
+                    >
+                      {String(option.count).padStart(2, '0')}
+                    </span>
+                    {isSelected && <Check className="h-3.5 w-3.5" />}
+                  </span>
+                </div>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export function SkillsSection() {
-  const [activeGroup, setActiveGroup] = useState<string>('all');
+  const [activeGroup, setActiveGroup] = useState<string>(ALL);
+
+  const options: FilterOption[] = [
+    { id: ALL, label: 'All categories', count: STACK_GROUPS.length },
+    ...STACK_GROUPS.map((group) => ({
+      id: group.id,
+      label: group.category,
+      count: group.tools.length,
+    })),
+  ];
 
   const visibleGroups =
-    activeGroup === 'all'
+    activeGroup === ALL
       ? STACK_GROUPS
-      : STACK_GROUPS.filter((g) => g.id === activeGroup);
+      : STACK_GROUPS.filter((group) => group.id === activeGroup);
 
   return (
     <section
@@ -17,7 +254,8 @@ export function SkillsSection() {
       className="mx-auto max-w-[1140px] px-4 pt-6 pb-14 sm:px-6 sm:pt-8 sm:pb-20"
     >
       <div className="border-t border-slate-900/[0.08] pt-8 sm:pt-10 dark:border-white/[0.08]">
-        <Reveal>
+        {/* z-30 keeps the dropdown above the cards it opens over */}
+        <Reveal className="relative z-30">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <p className="font-mono-tabular text-xs text-slate-500 dark:text-slate-400">
@@ -34,45 +272,12 @@ export function SkillsSection() {
                 between.
               </p>
             </div>
-          </div>
-        </Reveal>
 
-        {/* Interactive Category Filter Bar */}
-        <Reveal delay={0.06}>
-          <div
-            role="tablist"
-            aria-label="Filter technologies by category"
-            className="mt-6 flex flex-wrap gap-1.5 rounded-xl border border-slate-900/[0.08] bg-slate-900/[0.03] p-1.5 dark:border-white/[0.07] dark:bg-white/[0.025]"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeGroup === 'all'}
-              onClick={() => setActiveGroup('all')}
-              className={`min-h-[38px] rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap shrink-0 transition-all duration-150 ${
-                activeGroup === 'all'
-                  ? 'bg-slate-900 text-white shadow-sm dark:bg-white dark:text-[#090a0f]'
-                  : 'text-slate-600 hover:bg-slate-900/[0.06] hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/[0.06] dark:hover:text-white'
-              }`}
-            >
-              All ({STACK_GROUPS.length})
-            </button>
-            {STACK_GROUPS.map((group) => (
-              <button
-                key={group.id}
-                type="button"
-                role="tab"
-                aria-selected={activeGroup === group.id}
-                onClick={() => setActiveGroup(group.id)}
-                className={`min-h-[38px] rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap shrink-0 transition-all duration-150 ${
-                  activeGroup === group.id
-                    ? 'bg-slate-900 text-white shadow-sm dark:bg-white dark:text-[#090a0f]'
-                    : 'text-slate-600 hover:bg-slate-900/[0.06] hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/[0.06] dark:hover:text-white'
-                }`}
-              >
-                {group.category}
-              </button>
-            ))}
+            <StackFilter
+              options={options}
+              value={activeGroup}
+              onChange={setActiveGroup}
+            />
           </div>
         </Reveal>
 
