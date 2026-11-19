@@ -80,7 +80,7 @@ export const PORTFOLIO_PROFILE = {
   phoneHref: 'tel:+639636527633',
   gmailComposeUrl:
     'https://mail.google.com/mail/?view=cm&fs=1&to=benedictsalazar64@gmail.com',
-  portrait: '/assets/aistudio/Natural_creator_portrait_on_charcoal_gradient_1fd595dc.png',
+  portrait: '/assets/aistudio/portrait-1000-q92.webp',
   portraitAlt: 'Portrait of John Benedict Salazar',
   ogImage: '/og-image.png',
   resumeUrl: null as string | null,
@@ -451,7 +451,6 @@ export const PROJECTS: Project[] = [
     category: 'Local tool · Video',
     filterGroup: 'tools-concepts',
     format: 'Local video clipping tool',
-    status: 'Completed',
     featured: false,
     summary:
       'A completed local video tool for turning selected timestamps from longer recordings into clips.',

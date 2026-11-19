@@ -20,6 +20,14 @@
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="/og-image.png" />
+    <!-- Hero portrait is the LCP element; start it during HTML parse so it
+         does not wait for the JS bundle to mount. -->
+    <link
+      rel="preload"
+      as="image"
+      href="/assets/aistudio/portrait-1000-q92.webp"
+      fetchpriority="high"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

@@ -128,6 +128,8 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
                 src={PORTFOLIO_PROFILE.portrait}
                 alt={PORTFOLIO_PROFILE.portraitAlt}
                 referrerPolicy="no-referrer"
+                fetchPriority="high"
+                decoding="async"
                 className="h-full max-h-[380px] w-full object-cover object-top grayscale transition-all duration-700 ease-out group-hover:scale-[1.02] group-hover:grayscale-0 lg:max-h-none"
               />
               <div
