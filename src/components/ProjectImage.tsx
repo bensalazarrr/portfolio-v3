@@ -51,6 +51,7 @@ export function ProjectImage({
             src={src}
             alt={alt}
             loading="lazy"
+            decoding="async"
             referrerPolicy="no-referrer"
             onError={() => setHasError(true)}
             className="h-full w-auto object-contain"
@@ -62,6 +63,7 @@ export function ProjectImage({
               src={secondarySrc}
               alt={`${alt} secondary screen`}
               loading="lazy"
+              decoding="async"
               referrerPolicy="no-referrer"
               onError={() => setSecondaryError(true)}
               className="h-full w-auto object-contain"
@@ -80,6 +82,7 @@ export function ProjectImage({
         src={src}
         alt={alt}
         loading="lazy"
+        decoding="async"
         referrerPolicy="no-referrer"
         onError={() => setHasError(true)}
         className="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.035]"
