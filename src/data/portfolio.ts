@@ -339,6 +339,7 @@ export const PROJECTS: Project[] = [
     category: 'AI tool · Developer workspace',
     filterGroup: 'tools-concepts',
     format: 'Local-first AI workspace',
+    status: 'In development',
     featured: false,
     summary:
       'NEXUS is a local-first, free-first AI workspace that lets one person research, plan, and build software with many AI models, without a required subscription.',
@@ -534,6 +535,7 @@ export const STACK_GROUPS: SkillGroup[] = [
       { name: 'JavaScript' },
       { name: 'TypeScript' },
       { name: 'React' },
+      { name: 'Astro' },
       { name: 'Tailwind CSS' },
       { name: 'React Native' },
       { name: 'Expo', note: 'Learning' },
@@ -543,7 +545,7 @@ export const STACK_GROUPS: SkillGroup[] = [
     id: 'programming',
     category: 'Programming',
     description: 'Languages for working through problems and data.',
-    tools: [{ name: 'Java' }, { name: 'C' }, { name: 'SQL' }],
+    tools: [{ name: 'Java' }, { name: 'Python' }, { name: 'C' }, { name: 'SQL' }],
   },
   {
     id: 'database-backend',
@@ -573,6 +575,18 @@ export const STACK_GROUPS: SkillGroup[] = [
     ],
   },
   {
+    id: 'design-prototyping',
+    category: 'Design & prototyping',
+    description:
+      'Turning rough ideas into layouts and clickable prototypes, from wireframes to generated interfaces.',
+    tools: [
+      { name: 'Figma' },
+      { name: 'Google Stitch' },
+      { name: 'Uizard' },
+      { name: 'Banani' },
+    ],
+  },
+  {
     id: 'web-platforms',
     category: 'Web platforms',
     description: 'Creating and maintaining business websites.',
@@ -595,6 +609,8 @@ export const STACK_GROUPS: SkillGroup[] = [
       { name: 'Claude' },
       { name: 'Claude Code' },
       { name: 'Gemini' },
+      { name: 'Google AI Studio' },
+      { name: 'Antigravity' },
       { name: 'DeepSeek' },
     ],
   },
